@@ -1,4 +1,6 @@
 import supabase from "../supabase";
+import { User } from "@supabase/supabase-js";
+
 
 // Generate a secure hash for user details
 export function generateUserHash(email?: string, phone?: string): string {
@@ -19,7 +21,7 @@ export function generateUserHash(email?: string, phone?: string): string {
   ): Promise<{
     isValid: boolean;
     isUsed?: boolean;
-    userData?: any;
+    userData?: User;
   }> {
     try {
       // Find the user in the promoted table

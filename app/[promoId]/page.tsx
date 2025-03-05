@@ -54,6 +54,28 @@ export default function PromoDetailsPage() {
   const [confirmationUrl, setConfirmationUrl] = useState<string | null>(null);
   const [isClaimLoading, setIsClaimLoading] = useState(false);
 
+  const fetchPromotedUsers = async () => {
+    setIsUsersLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("promoted")
+        .select("*")
+        .eq("promo_id", promoId)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching promoted users:", error);
+        return;
+      }
+
+      setPromotedUsers(data || []);
+    } catch (err) {
+      console.error("Unexpected error fetching promoted users:", err);
+    } finally {
+      setIsUsersLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchPromoDetails = async () => {
       try {
@@ -106,29 +128,7 @@ export default function PromoDetailsPage() {
     if (promoId) {
       fetchPromoDetails();
     }
-  }, [promoId, router]);
-
-  const fetchPromotedUsers = async () => {
-    setIsUsersLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("promoted")
-        .select("*")
-        .eq("promo_id", promoId)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching promoted users:", error);
-        return;
-      }
-
-      setPromotedUsers(data || []);
-    } catch (err) {
-      console.error("Unexpected error fetching promoted users:", err);
-    } finally {
-      setIsUsersLoading(false);
-    }
-  };
+  }, [promoId, router, fetchPromotedUsers]);
 
   const handleMarkPromoUsed = async (
     userId: number,

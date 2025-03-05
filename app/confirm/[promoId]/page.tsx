@@ -6,11 +6,21 @@ import { QRCodeSVG } from "qrcode.react";
 import { validatePromoConfirmation } from "../../services/valigen"; // adjust import path as needed
 import supabase from "@/app/supabase";
 
+interface PromoDetails {
+  id: number;
+  event_name: string;
+  organiser_name: string;
+  reward: string;
+  purpose: string;
+  expiration_date: string;
+  account_id: number;
+}
+
 export default function PromoConfirmationPage() {
   const params = useParams();
   const searchParams = useSearchParams();
 
-  const [promoDetails, setPromoDetails] = useState<any>(null);
+  const [promoDetails, setPromoDetails] = useState<PromoDetails | null>(null);
   const [validationStatus, setValidationStatus] = useState<{
     isValid: boolean;
     isUsed?: boolean;
