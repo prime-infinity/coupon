@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import supabase from "../supabase";
 import { QRCodeSVG } from "qrcode.react";
@@ -54,7 +54,7 @@ export default function PromoDetailsPage() {
   const [confirmationUrl, setConfirmationUrl] = useState<string | null>(null);
   const [isClaimLoading, setIsClaimLoading] = useState(false);
 
-  const fetchPromotedUsers = async () => {
+  const fetchPromotedUsers = useCallback(async () => {
     setIsUsersLoading(true);
     try {
       const { data, error } = await supabase
@@ -74,7 +74,7 @@ export default function PromoDetailsPage() {
     } finally {
       setIsUsersLoading(false);
     }
-  };
+  }, [promoId]);
 
   useEffect(() => {
     const fetchPromoDetails = async () => {
@@ -128,7 +128,7 @@ export default function PromoDetailsPage() {
     if (promoId) {
       fetchPromoDetails();
     }
-  }, [promoId, router, fetchPromotedUsers]);
+  }, [promoId, router, fetchPromotedUsers]); // Remove fetchPromotedUsers from dependencies
 
   const handleMarkPromoUsed = async (
     userId: number,
