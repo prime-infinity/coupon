@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import supabase from "../supabase";
 import { QRCodeSVG } from "qrcode.react";
 import Link from "next/link";
+import { generateConfirmationUrl } from "../services/valigen"; // adjust import path as needed
 
 interface PromoDetails {
   id: number;
@@ -50,6 +51,7 @@ export default function PromoDetailsPage() {
   });
   const [claimError, setClaimError] = useState<string | null>(null);
   const [claimSuccess, setClaimSuccess] = useState(false);
+  const [confirmationUrl, setConfirmationUrl] = useState<string | null>(null);
   const [isClaimLoading, setIsClaimLoading] = useState(false);
 
   useEffect(() => {
@@ -180,6 +182,7 @@ export default function PromoDetailsPage() {
 
     setIsClaimLoading(true);
     setClaimError(null);
+    setConfirmationUrl(null);
 
     try {
       // Check if user has already claimed this promo using email OR phone
@@ -200,7 +203,17 @@ export default function PromoDetailsPage() {
       }
 
       if (existingClaims && existingClaims.length > 0) {
+        // If already claimed, generate and show the existing confirmation URL
+        const existingClaim = existingClaims[0];
+        const url = generateConfirmationUrl(
+          window.location.origin,
+          promoId as string,
+          existingClaim.email || undefined,
+          existingClaim.phone || undefined
+        );
+
         setClaimError("You have already claimed this promo.");
+        setConfirmationUrl(url);
         setIsClaimLoading(false);
         return;
       }
@@ -220,8 +233,17 @@ export default function PromoDetailsPage() {
         return;
       }
 
+      // Generate confirmation URL for the new claim
+      const url = generateConfirmationUrl(
+        window.location.origin,
+        promoId as string,
+        claimForm.email.trim() || undefined,
+        claimForm.phone.trim() || undefined
+      );
+
       // Success
       setClaimSuccess(true);
+      setConfirmationUrl(url);
 
       // Reset form and clear details
       setClaimForm({
@@ -233,8 +255,9 @@ export default function PromoDetailsPage() {
       // Reset form after 3 seconds
       setTimeout(() => {
         setClaimSuccess(false);
+        setConfirmationUrl(null);
         setIsClaimLoading(false);
-      }, 3000);
+      }, 5000);
     } catch (err) {
       console.error("Unexpected error:", err);
       setClaimError("An unexpected error occurred.");
@@ -496,15 +519,42 @@ export default function PromoDetailsPage() {
                   role="alert"
                 >
                   {claimError}
+                  {confirmationUrl && (
+                    <div className="mt-2">
+                      <p className="font-semibold">Confirmation URL:</p>
+                      <a
+                        href={confirmationUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 underline break-all"
+                      >
+                        {confirmationUrl}
+                      </a>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {claimSuccess && (
+              {claimSuccess && confirmationUrl && (
                 <div
                   className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
                   role="alert"
                 >
-                  QR code sent to your details, please check to claim promo
+                  <p>Promo claimed successfully!</p>
+                  <p className="mt-2">
+                    <span className="font-semibold">Confirmation URL:</span>
+                    <a
+                      href={confirmationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline break-all ml-2"
+                    >
+                      {confirmationUrl}
+                    </a>
+                  </p>
+                  <p className="mt-2 text-sm">
+                    Show this URL to the promo creator to claim your reward.
+                  </p>
                 </div>
               )}
 
