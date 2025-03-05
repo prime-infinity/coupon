@@ -40,27 +40,26 @@ export default function PromoDetailsPage() {
           return;
         }
 
-        // Check if current user is the owner
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        // Check if current user is the owner (optional)
+        try {
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
 
-        if (!user) {
-          router.push("/signin");
-          return;
-        }
+          if (user) {
+            const { data: accountInfo, error: accountError } = await supabase
+              .from("account_info")
+              .select("id")
+              .eq("user_id", user.id)
+              .single();
 
-        const { data: accountInfo, error: accountError } = await supabase
-          .from("account_info")
-          .select("id")
-          .eq("user_id", user.id)
-          .single();
-
-        if (accountError) {
-          console.error("Error fetching account info:", accountError);
-          setIsOwner(false);
-        } else {
-          setIsOwner(data.account_id === accountInfo.id);
+            if (!accountError) {
+              setIsOwner(data.account_id === accountInfo.id);
+            }
+          }
+        } catch (authError) {
+          // If there's an authentication error, it's fine - just means no owner check
+          console.log("No authenticated user, proceeding with promo details");
         }
 
         setPromo(data);
@@ -148,6 +147,7 @@ export default function PromoDetailsPage() {
   return (
     <div className="min-h-screen bg-white p-8">
       <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-xl p-8 space-y-6">
+        {/* Only show Back to Dashboard if user is authenticated and owner */}
         {isOwner && (
           <Link
             href="/dashboard"
