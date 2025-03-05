@@ -167,10 +167,11 @@ export default function PromoConfirmationPage() {
             {promoDetails && (
               <>
                 <h1 className="text-2xl font-bold">
+                  Promo Name:
                   {promoDetails.event_name}
                 </h1>
                 <p className="text-gray-600 mb-4">
-                  {promoDetails.organiser_name}
+                  Promo Organiser:{promoDetails.organiser_name}
                 </p>
 
                 {validationStatus.isUsed ? (
@@ -183,7 +184,7 @@ export default function PromoConfirmationPage() {
                       <div className="bg-white p-4 border border-gray-200 rounded-lg">
                         <QRCodeSVG
                           ref={qrRef}
-                          value={`${promoDetails.id}`}
+                          value={`https://coupon-inky-one.vercel.app/${promoDetails.id}`}
                           size={256}
                           level={"H"}
                         />
