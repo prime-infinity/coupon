@@ -59,7 +59,10 @@ export default function PromoDetailsPage() {
           }
         } catch (authError) {
           // If there's an authentication error, it's fine - just means no owner check
-          console.log("No authenticated user, proceeding with promo details");
+          console.log(
+            "No authenticated user, proceeding with promo details",
+            authError
+          );
         }
 
         setPromo(data);
