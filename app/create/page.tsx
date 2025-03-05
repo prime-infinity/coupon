@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import supabase from "../supabase";
 
 export default function CreatePromoPage() {
-  const [accountName, setAccountName] = useState("");
+  const [_, setAccountName] = useState("");
   const [organiserId, setOrganiserId] = useState("");
   const [organiserName, setOrganizerName] = useState("");
   const [eventName, setEventName] = useState("");
