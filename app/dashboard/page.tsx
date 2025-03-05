@@ -17,7 +17,7 @@ interface Promo {
 
 export default function DashboardPage() {
   const [accountName, setAccountName] = useState("");
-  const [accountId, setAccountId] = useState("");
+  //const [accountId, setAccountId] = useState("");
   const [promos, setPromos] = useState<Promo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -51,7 +51,7 @@ export default function DashboardPage() {
         } else {
           // Set account name and ID
           setAccountName(data?.name || "N/A");
-          setAccountId(data?.id || "");
+          //setAccountId(data?.id || "");
 
           // Fetch promos for this account
           const { data: promosData, error: promosError } = await supabase
@@ -109,7 +109,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center">
       <div className="w-full max-w-md p-8 space-y-6 bg-white">
-        <h1 className="text-2xl font-bold text-center">Dashboard</h1>
+        {/*<h1 className="text-2xl font-bold text-center">Dashboard</h1>*/}
         <p className="text-center">
           Logged in as: <span className="font-semibold">{accountName}</span>
         </p>

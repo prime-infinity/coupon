@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import supabase from "../supabase";
 
 export default function CreatePromoPage() {
-  const [_, setAccountName] = useState("");
+  //const [accountName, setAccountName] = useState("");
   const [organiserId, setOrganiserId] = useState("");
   const [organiserName, setOrganizerName] = useState("");
   const [eventName, setEventName] = useState("");
@@ -45,7 +45,7 @@ export default function CreatePromoPage() {
         }
 
         // Set default organizer name and ID
-        setAccountName(data?.name || "N/A");
+        //setAccountName(data?.name || "N/A");
         setOrganiserId(data?.id || "");
         setOrganizerName(data?.name || "");
       } catch (err) {
@@ -97,7 +97,7 @@ export default function CreatePromoPage() {
       } else {
         router.push("/dashboard");
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
       setIsLoading(false);
     }
