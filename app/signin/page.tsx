@@ -105,7 +105,7 @@ export default function SigninPage() {
         </button>
       </form>
       <p className="text-center text-sm mt-4">
-        Don't have an account?
+        Don&apos;t have an account?{" "}
         <Link href="/signup" className="text-black underline">
           Sign Up
         </Link>
