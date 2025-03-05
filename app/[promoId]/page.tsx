@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import supabase from "../supabase";
 import { QRCodeSVG } from "qrcode.react";
@@ -21,6 +21,7 @@ export default function PromoDetailsPage() {
   const [promo, setPromo] = useState<PromoDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isOwner, setIsOwner] = useState(false);
+  const qrRef = useRef<SVGSVGElement>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -76,6 +77,41 @@ export default function PromoDetailsPage() {
     }
   }, [promoId, router]);
 
+  const downloadQRCode = () => {
+    if (qrRef.current && promo) {
+      // Create a canvas element
+      const canvas = document.createElement("canvas");
+      const svg = qrRef.current;
+      const ctx = canvas.getContext("2d");
+
+      // Convert SVG to image
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const img = new Image();
+      img.onload = () => {
+        // Set canvas size to match QR code
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // Fill with white background
+        if (ctx) {
+          ctx.fillStyle = "white";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          // Draw the QR code image on top of white background
+          ctx.drawImage(img, 0, 0);
+        }
+
+        // Convert to data URL and trigger download (with JPEG)
+        const dataURL = canvas.toDataURL("image/jpeg", 1.0);
+        const link = document.createElement("a");
+        link.download = `qr_code_${promo.event_name}.jpg`;
+        link.href = dataURL;
+        link.click();
+      };
+      img.src = "data:image/svg+xml;base64," + btoa(svgData);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -111,7 +147,7 @@ export default function PromoDetailsPage() {
 
   return (
     <div className="min-h-screen bg-white p-8">
-      <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-xl shadow-md p-8 space-y-6">
+      <div className="max-w-2xl mx-auto bg-white border border-gray-200 rounded-xl p-8 space-y-6">
         {isOwner && (
           <Link
             href="/dashboard"
@@ -145,9 +181,10 @@ export default function PromoDetailsPage() {
           </div>
         </div>
 
-        <div className="flex justify-center mt-8">
+        <div className="flex flex-col items-center mt-8 space-y-4">
           <div className="bg-white p-4 border border-gray-200 rounded-lg">
             <QRCodeSVG
+              ref={qrRef}
               value={`https://coupon-inky-one.vercel.app/${promo.id}`}
               size={256}
               level={"H"}
@@ -156,6 +193,13 @@ export default function PromoDetailsPage() {
               Scan to view promo details
             </p>
           </div>
+
+          <button
+            onClick={downloadQRCode}
+            className="py-2 px-4 bg-black text-white rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Download QR Code
+          </button>
         </div>
       </div>
     </div>

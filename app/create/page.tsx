@@ -70,17 +70,20 @@ export default function CreatePromoPage() {
         return;
       }
 
-      // Insert promo
-      const { error: insertError } = await supabase.from("promos").insert([
-        {
-          organiser_name: organiserName,
-          event_name: eventName,
-          reward,
-          purpose,
-          expiration_date: expirationDate,
-          account_id: organiserId,
-        },
-      ]);
+      // Insert promo and get the inserted promo
+      const { data, error: insertError } = await supabase
+        .from("promos")
+        .insert([
+          {
+            organiser_name: organiserName,
+            event_name: eventName,
+            reward,
+            purpose,
+            expiration_date: expirationDate,
+            account_id: organiserId,
+          },
+        ])
+        .select();
 
       if (insertError) {
         setError(insertError.message);
@@ -88,8 +91,12 @@ export default function CreatePromoPage() {
         return;
       }
 
-      // Redirect to dashboard or show success message
-      router.push("/dashboard");
+      // Redirect to the newly created promo's details page
+      if (data && data.length > 0) {
+        router.push(`/${data[0].id}`);
+      } else {
+        router.push("/dashboard");
+      }
     } catch (err) {
       setError("An unexpected error occurred");
       setIsLoading(false);
