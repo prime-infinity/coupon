@@ -162,7 +162,7 @@ export default function DashboardPage() {
           href="/create"
           className="w-full block text-center py-4 px-4 bg-black text-white rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500"
         >
-          Start Promo
+          Create Promo
         </Link>
 
         <button
