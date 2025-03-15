@@ -179,8 +179,9 @@ export default function CreatePromoPage() {
               </p>
               <ul className="text-sm text-gray-600 list-disc pl-5 mb-2">
                 <li>What event or promotion this is for</li>
-                <li>What reward/discount you're offering</li>
-                <li>Why you're running this promotion</li>
+                <li>What reward/discount you&apos;re offering</li>
+                <li>Why you&apos;re running this promotion</li>
+
                 <li>When it should expire (optional)</li>
               </ul>
             </div>
